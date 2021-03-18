@@ -3,6 +3,8 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -10,7 +12,7 @@ import java.io.File;
 
 public class InvoiceGeneratorPage {
 
-    private WebDriver driver;
+    private RemoteWebDriver driver;
     private WebDriverWait wait;
 
     //HEADER
@@ -48,9 +50,9 @@ public class InvoiceGeneratorPage {
     private By colorSelectList          = By.className("color-select-option");
 
 
-    public InvoiceGeneratorPage(WebDriver driver){
+    public InvoiceGeneratorPage(RemoteWebDriver driver){
         this.driver = driver;
-        wait = new WebDriverWait(driver, 5);
+        wait = new WebDriverWait(driver, 15);
     }
 
     public void setInvoiceTitle(String title){
@@ -61,7 +63,9 @@ public class InvoiceGeneratorPage {
     }
 
     public void setLogo(File imgFile){
+        driver.setFileDetector(new LocalFileDetector());
         driver.findElement(logoInput).sendKeys(imgFile.getAbsolutePath());
+//        driver.findElement(logoInput).sendKeys(imgFile.getAbsolutePath());
     }
 
     public void setFromName(String name){

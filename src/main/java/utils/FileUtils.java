@@ -1,6 +1,10 @@
 package utils;
 
+import org.openqa.selenium.remote.RemoteWebDriver;
+
 import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
 
 public class FileUtils {
 
@@ -11,7 +15,7 @@ public class FileUtils {
      * @param destination pathname to move file to
      * @return was move successful
      */
-    public static boolean moveFile(File file, String destination){
+    public static boolean moveFile(File file, String destination) {
 
         File existingFile = new File(destination);
         if(existingFile.exists()){
@@ -19,5 +23,16 @@ public class FileUtils {
         }
 
         return file.renameTo(new File(destination));
+    }
+
+    public static void downloadFileFromSeleniumAgent(RemoteWebDriver driver) {
+        byte[] content = null;
+        Object res = driver.executeScript("seetest:client.getFile(\"INV12345.pdf\")");
+        content = Base64.getDecoder().decode((String) res);
+        try {
+            org.apache.commons.io.FileUtils.writeByteArrayToFile(new File("C:\\Users\\RaheeKhan\\Desktop\\Clients\\POCs\\BroadridgeFinancial\\pdf_testing\\automation\\INV12345.pdf"), content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

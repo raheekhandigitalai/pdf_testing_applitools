@@ -3,6 +3,7 @@ import base.EyesManager;
 import org.junit.Assert;
 import org.junit.Test;
 import pages.InvoiceGeneratorPage;
+import pages.InvoiceLoginPage;
 import pages.InvoicePreviewPage;
 import utils.FileUtils;
 
@@ -13,12 +14,16 @@ public class PDFTests extends BaseTests {
 
     @Test
     public void testInvoices() {
-        
+
+        InvoiceLoginPage login = new InvoiceLoginPage(driver);
+        login.navigateToLoginPage();
+        login.login();
+
         String invoiceNumber = "INV12345";
 
         InvoiceGeneratorPage generatorPage = new InvoiceGeneratorPage(driver);
         generatorPage.setInvoiceTitle("Invoice from your Personal Stylist");
-        generatorPage.setLogo(new File("resources/logo.png"));
+        generatorPage.setLogo(new File(System.getProperty("user.dir") + "\\resources\\logo.png"));
         generatorPage.selectColor(4);
 
         generatorPage.setFromName("Marie Combs");
@@ -52,13 +57,14 @@ public class PDFTests extends BaseTests {
         eyesManager.validateWindow();
         previewPage.clickPDFButton();
 
-        //TODO: change the pathname to your own
-        File downloadedPDF = new File("/Users/angie/Downloads/" + invoiceNumber + ".pdf");
-        String destination = "resources/Invoice_PDFs/" + invoiceNumber + ".pdf";
+        FileUtils.downloadFileFromSeleniumAgent(driver);
+
+        File downloadedPDF = new File("C:\\Users\\RaheeKhan\\Desktop\\Clients\\POCs\\BroadridgeFinancial\\pdf_testing\\automation\\" + invoiceNumber + ".pdf");
+        String destination = System.getProperty("user.dir") + "\\resources\\Invoice_PDFs\\" + invoiceNumber + ".pdf";
         Assert.assertTrue(invoiceNumber + ".pdf file was not moved to test location",
                 FileUtils.moveFile(downloadedPDF, destination));
 
-        try{
+        try {
             Assert.assertTrue("Error validating PDF", EyesManager.validatePDF(destination));
         }
         catch (InterruptedException|IOException e) {

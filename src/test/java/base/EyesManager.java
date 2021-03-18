@@ -3,6 +3,7 @@ package base;
 import com.applitools.eyes.selenium.Eyes;
 import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.IOException;
 
@@ -10,9 +11,9 @@ public class EyesManager {
 
     private Eyes eyes;
     private String appName;
-    private WebDriver driver;
+    private RemoteWebDriver driver;
 
-    public EyesManager(WebDriver driver, String appName){
+    public EyesManager(RemoteWebDriver driver, String appName) {
         this.driver = driver;
         this.appName = appName;
 
@@ -20,7 +21,7 @@ public class EyesManager {
         eyes.setApiKey(System.getProperty("applitools.api.key"));
     }
 
-    public void validateWindow(){
+    public void validateWindow() {
         eyes.open(driver, appName, Thread.currentThread().getStackTrace()[2].getMethodName());
         eyes.checkWindow();
         eyes.close();
@@ -28,7 +29,7 @@ public class EyesManager {
 
     public static boolean validatePDF(String filepath) throws IOException, InterruptedException {
         String command = String.format(
-                "java -jar resources/ImageTester.jar -k %s -f %s",
+                "java -jar " + System.getProperty("user.dir") + "\\resources\\ImageTester.jar -k %s -f %s",
                 System.getProperty("applitools.api.key"),
                 filepath);
 
@@ -37,7 +38,7 @@ public class EyesManager {
         String stream = IOUtils.toString(process.getInputStream(), "UTF-8");
         System.out.println(stream);
 
-        if(stream != null && stream.contains("Mismatch")){
+        if (stream != null && stream.contains("Mismatch")) {
             return false;
         }
 
